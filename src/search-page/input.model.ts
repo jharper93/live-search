@@ -1,25 +1,6 @@
 import { action, makeAutoObservable } from "mobx";
 import { getManagers } from "../api/managers";
 
-export interface IDataArray {
-  id: string;
-  attributes: {
-    name: string;
-    firstName: string;
-    lastName: string;
-    Department: string;
-  };
-}
-
-export interface IManagerList {
-  id: string;
-  combinedName: string;
-  name: string;
-  firstName: string;
-  lastName: string;
-  department: string;
-}
-
 export class SearchRootModel {
   constructor() {
     makeAutoObservable(this);
@@ -29,12 +10,13 @@ export class SearchRootModel {
   inputValue: string = "";
   isInputFocused = false;
   activeListIndex: number | undefined;
+  activeManagerId: string | undefined;
 
   get removeNewManager() {
     if (!this.data) return [];
-    return this.data.filter((m) => {
-      return m.attributes.lastName === "Manager" ? false : true;
-    });
+    return this.data.filter((m) =>
+      m.attributes.lastName === "Manager" ? false : true
+    );
   }
 
   get managersArray(): IManagerList[] {
@@ -46,43 +28,44 @@ export class SearchRootModel {
         id,
         combinedName: `${firstName}${lastName}`,
         name,
-        firstName,
-        lastName,
-        department: Department,
+        email: `${firstName}.${lastName}@kinetar.com`,
+        avatarText: `${firstName.charAt(0)}${lastName.charAt(0)}`,
       })
     );
   }
 
   get managersFilteredByInput() {
     if (!this.inputValue) return this.managersArray;
-    return this.managersArray.filter(({ combinedName }) =>
-      combinedName.includes(this.inputValue) ? true : false
-    );
+    return this.managersArray.filter(({ combinedName, name }) => {
+      if (
+        combinedName.includes(this.inputValue) ||
+        name.includes(this.inputValue)
+      ) {
+        return true;
+      }
+      return false;
+    });
   }
 
   get managersListLength() {
     return this.managersFilteredByInput.length - 1;
   }
 
-  @action keyEventHandler = ({ key }: KeyboardEvent) => {
-    const isFocusedNoInput =
-      this.activeListIndex === undefined && this.isInputFocused;
-    const isArrowKey = key === "ArrowDown" || key === "ArrowUp";
+  @action keyEventHandler = (key: string) => {
+    const isArrowUp = key === "ArrowUp";
+    const isArrowDown = key === "ArrowDown";
+    const isArrowKey = isArrowUp || isArrowDown;
 
-    console.log({
-      isActiveListIndexUndefined: this.activeListIndex === undefined,
-      isInputFocused: this.isInputFocused,
-      isArrowKey,
-    });
-
-    isFocusedNoInput && isArrowKey && this.setActiveListItem(0);
-    key === "ArrowDown" && this.increaseListItem(1);
-    key === "ArrowUp" && this.increaseListItem(-1);
-    key === "Enter" && console.log(key);
-  };
-
-  @action setActiveListItem = (value: this["activeListIndex"]) => {
-    this.activeListIndex = value;
+    if (
+      this.activeListIndex === undefined &&
+      this.isInputFocused &&
+      isArrowKey
+    ) {
+      return this.setActiveListItem(0);
+    }
+    isArrowDown && this.increaseListItem(1);
+    isArrowUp && this.increaseListItem(-1);
+    key === "Enter" && this.setActiveManagerId();
   };
 
   @action increaseListItem = (value: this["activeListIndex"]) => {
@@ -90,9 +73,19 @@ export class SearchRootModel {
       if (!this.isInputFocused) return;
       const sum = value + this.activeListIndex;
       if (sum < 0 || sum > this.managersListLength) return;
-      console.log({ value, activeListIndex: this.activeListIndex, sum });
       this.activeListIndex = sum;
     }
+  };
+
+  @action setActiveManagerId = () => {
+    if (this.activeListIndex === undefined) return;
+    this.activeManagerId =
+      this.managersFilteredByInput[this.activeListIndex].id;
+    this.activeListIndex = undefined;
+  };
+
+  @action setActiveListItem = (value: this["activeListIndex"]) => {
+    this.activeListIndex = value;
   };
 
   @action setInputValue = (value: this["inputValue"]) => {
@@ -110,4 +103,22 @@ export class SearchRootModel {
 
     this.data = data;
   };
+}
+
+export interface IDataArray {
+  id: string;
+  attributes: {
+    name: string;
+    firstName: string;
+    lastName: string;
+    Department: string;
+  };
+}
+
+export interface IManagerList {
+  id: string;
+  combinedName: string;
+  name: string;
+  email: string;
+  avatarText: string;
 }
