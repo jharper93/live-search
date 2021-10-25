@@ -9,14 +9,15 @@ interface IProps {
   setInputValue(eventTargetValue: string): void;
 }
 
-export const Input: React.FC<IProps> = observer(
+export const TextInput: React.FC<IProps> = observer(
   ({ value, isInputFocused, setInputValue, setIsInputFocused }) => {
     return (
-      <TextInput
+      <Input
         isInputFocused={isInputFocused}
         onFocus={() => setIsInputFocused(true)}
         onBlur={() => setIsInputFocused(false)}
         type="text"
+        placeholder="Choose Manager"
         value={value}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setInputValue(e.currentTarget.value)
@@ -26,16 +27,20 @@ export const Input: React.FC<IProps> = observer(
   }
 );
 
-const TextInput = styled.input<{
+const Input = styled.input<{
   isInputFocused: boolean;
   type: string;
   value: string;
 }>`
-  width: 350px;
-  height: 40px;
+  width: 320px;
+  height: 45px;
   padding: 0 15px;
   border-radius: 5px;
   font-size: 16px;
-  border: solid 2px;
-  border-color: ${({ isInputFocused }) => (isInputFocused ? "green" : "blue")};
+  outline: none;
+  border: solid 2px #215e23;
+  box-shadow: 0px 5px 4px 0px rgb(141 141 141);
+  :focus {
+    border: solid 2px #3e9641;
+  }
 `;

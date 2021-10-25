@@ -28,7 +28,7 @@ export class SearchRootModel {
         id,
         combinedName: `${firstName}${lastName}`,
         name,
-        email: `${firstName}.${lastName}@kinetar.com`,
+        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@kinetar.com`,
         avatarText: `${firstName.charAt(0)}${lastName.charAt(0)}`,
       })
     );
@@ -61,11 +61,16 @@ export class SearchRootModel {
       this.isInputFocused &&
       isArrowKey
     ) {
-      return this.setActiveListItem(0);
+      return this.setActiveListIndex(0);
     }
     isArrowDown && this.increaseListItem(1);
     isArrowUp && this.increaseListItem(-1);
-    key === "Enter" && this.setActiveManagerId(true);
+    if (key === "Enter") {
+      if (this.activeListIndex === undefined) return;
+      this.setActiveManagerId(
+        this.managersFilteredByInput[this.activeListIndex].id
+      );
+    }
   };
 
   @action increaseListItem = (value: this["activeListIndex"]) => {
@@ -77,16 +82,13 @@ export class SearchRootModel {
     }
   };
 
-  @action setActiveManagerId = (setValue: boolean) => {
-    if (!setValue) return (this.activeManagerId = undefined);
-    if (this.activeListIndex === undefined) return;
-    this.activeManagerId =
-      this.managersFilteredByInput[this.activeListIndex].id;
-
+  @action setActiveManagerId = (id: string | undefined) => {
+    if (!id) return (this.activeManagerId = undefined);
+    this.activeManagerId = id;
     this.activeListIndex = undefined;
   };
 
-  @action setActiveListItem = (value: this["activeListIndex"]) => {
+  @action setActiveListIndex = (value: this["activeListIndex"]) => {
     this.activeListIndex = value;
   };
 
