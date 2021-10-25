@@ -3,15 +3,38 @@ import styled from "styled-components";
 import { IManagerList } from "../input.model";
 
 interface IProps {
+  _ref: React.RefObject<any>;
   list: IManagerList[];
   activeListIndex: number | undefined;
 }
 
-export const SearchList: React.FC<IProps> = ({ list, activeListIndex }) => {
+export const SearchList: React.FC<IProps> = ({
+  _ref,
+  list,
+  activeListIndex,
+}) => {
+  // const refs = list.reduce((acc, value) => {
+  //   acc.assign(React.createRef();)
+  //   return acc;
+  // }, {});
+
+  // React.useEffect(() => {
+  //   if (!_ref) return;
+  //   if (!activeListIndex) return;
+  //   refs[activeListIndex].current.scrollIntoView({
+  //     behavior: 'smooth',
+  //     block: 'start',
+  //   });
+  // }, [activeListIndex]);
+
   return (
     <List listLength={list.length}>
       {list.map(({ name, email, avatarText, id }, i) => (
-        <ListItem isActive={i === activeListIndex} key={id}>
+        <ListItem
+          ref={i === activeListIndex ? _ref : null}
+          isActive={i === activeListIndex}
+          key={id}
+        >
           <Avatar>{avatarText}</Avatar>
           <TextContainer>
             <div>{name}</div>

@@ -65,7 +65,7 @@ export class SearchRootModel {
     }
     isArrowDown && this.increaseListItem(1);
     isArrowUp && this.increaseListItem(-1);
-    key === "Enter" && this.setActiveManagerId();
+    key === "Enter" && this.setActiveManagerId(true);
   };
 
   @action increaseListItem = (value: this["activeListIndex"]) => {
@@ -77,10 +77,12 @@ export class SearchRootModel {
     }
   };
 
-  @action setActiveManagerId = () => {
+  @action setActiveManagerId = (setValue: boolean) => {
+    if (!setValue) return (this.activeManagerId = undefined);
     if (this.activeListIndex === undefined) return;
     this.activeManagerId =
       this.managersFilteredByInput[this.activeListIndex].id;
+
     this.activeListIndex = undefined;
   };
 

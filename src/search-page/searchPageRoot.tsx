@@ -5,18 +5,18 @@ import { useStore } from "../root.model";
 import { Input } from "./partials/input";
 import { SearchList } from "./partials/list";
 
-interface Props {}
-
-export const SearchPage: React.FC<Props> = observer(() => {
+export const SearchPage: React.FC = observer(() => {
   const {
     searchPage: {
       activeManagerId,
       isInputFocused,
-      setIsInputFocused,
+      managersArray,
       managersFilteredByInput,
       inputValue,
       activeListIndex,
       managersListLength,
+      setActiveManagerId,
+      setIsInputFocused,
       getMangers,
       setInputValue,
       setActiveListItem,
@@ -24,18 +24,12 @@ export const SearchPage: React.FC<Props> = observer(() => {
     },
   } = useStore();
 
+  const searchListItem = React.useRef<any>(null);
+
   React.useEffect(() => {
     getMangers();
     window.addEventListener("keydown", ({ key }) => keyEventHandler(key));
   }, []);
-
-  React.useEffect(() => {
-    const managerToSet = managersFilteredByInput.find(
-      ({ id }) => id === activeManagerId
-    )?.name;
-    if (!managerToSet) return;
-    setInputValue(managerToSet);
-  }, [activeManagerId]);
 
   React.useEffect(() => {
     setActiveListItem(undefined);
@@ -45,6 +39,20 @@ export const SearchPage: React.FC<Props> = observer(() => {
     !isInputFocused && setActiveListItem(undefined);
   }, [isInputFocused]);
 
+  React.useEffect(() => {
+    const exactMatch = managersArray.find(({ name }) => name === inputValue);
+    if (exactMatch) return;
+    setActiveManagerId(false);
+  }, [inputValue]);
+
+  React.useEffect(() => {
+    const managerToSet = managersFilteredByInput.find(
+      ({ id }) => id === activeManagerId
+    )?.name;
+    if (!managerToSet) return;
+    setInputValue(managerToSet);
+  }, [activeManagerId]);
+
   return (
     <>
       <Input
@@ -53,8 +61,9 @@ export const SearchPage: React.FC<Props> = observer(() => {
         setInputValue={setInputValue}
         setIsInputFocused={setIsInputFocused}
       />
-      {isInputFocused && (
+      {isInputFocused && managersFilteredByInput.length && !activeManagerId && (
         <SearchList
+          _ref={searchListItem}
           list={managersFilteredByInput}
           activeListIndex={activeListIndex}
         />
