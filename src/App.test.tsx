@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { SearchPage } from "./search-page/searchPageRoot";
+import { SearchPage } from "./search-page/root";
 
 test("renders learn react link", () => {
   render(<SearchPage />);

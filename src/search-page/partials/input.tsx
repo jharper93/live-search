@@ -12,17 +12,19 @@ interface IProps {
 export const TextInput: React.FC<IProps> = observer(
   ({ value, isInputFocused, setInputValue, setIsInputFocused }) => {
     return (
-      <Input
-        isInputFocused={isInputFocused}
-        onFocus={() => setIsInputFocused(true)}
-        onBlur={() => setIsInputFocused(false)}
-        type="text"
-        placeholder="Choose Manager"
-        value={value}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setInputValue(e.currentTarget.value)
-        }
-      />
+      <>
+        <Input
+          isInputFocused={isInputFocused}
+          type="text"
+          placeholder="Choose Manager"
+          value={value}
+          onFocus={() => setIsInputFocused(true)}
+          onBlur={() => setIsInputFocused(false)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setInputValue(e.currentTarget.value)
+          }
+        />
+      </>
     );
   }
 );
@@ -38,8 +40,9 @@ const Input = styled.input<{
   border-radius: 5px;
   font-size: 16px;
   outline: none;
-  border: solid 2px #215e23;
-  box-shadow: 0px 5px 4px 0px rgb(141 141 141);
+
+  box-shadow: 0px 2px 3px 0px rgb(141 141 141);
+  border: solid 1px gray;
   :focus {
     border: solid 2px #3e9641;
   }

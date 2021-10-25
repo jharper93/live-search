@@ -17,40 +17,47 @@ export const SearchList: React.FC<IProps> = ({
 }) => {
   const myRef = React.useRef<any>(null);
 
+  // Uncomment to see list auto scrolling when up/down arrow buttons used (be warned it is buggy)
   // React.useEffect(() => {
   //   if (activeListIndex === undefined) return;
+  //   const isEven = activeListIndex % 2 === 0 || activeListIndex === 0
 
   //   if (!myRef.current) return;
-  //   myRef.current.scrollIntoView();
+  //   myRef.current.scrollIntoView(isEven);
   // }, [activeListIndex]);
 
   return (
     <>
       <List listLength={list.length}>
-        {list.map(({ name, email, avatarText, id }, i) => (
-          <ListItem
-            ref={i === activeListIndex ? myRef : null}
-            isActive={i === activeListIndex}
-            key={id}
-            onMouseEnter={() => setActiveListIndex(i)}
-            onMouseDown={() => setActiveManagerId(id)}
-          >
-            <Avatar className="avatar" isActive={i === activeListIndex}>
-              {avatarText}
-            </Avatar>
-            <TextContainer>
-              <div>{name}</div>
-              <div className="email">{email}</div>
-            </TextContainer>
-          </ListItem>
-        ))}
+        {list.map(({ name, email, id, avatar: { text, color } }, i) => {
+          const isActive = i === activeListIndex;
+
+          return (
+            <ListItem
+              key={id}
+              isActive={isActive}
+              color={color}
+              ref={isActive ? myRef : null}
+              onMouseEnter={() => setActiveListIndex(i)}
+              onMouseDown={() => setActiveManagerId(id)}
+            >
+              <Avatar className="avatar" isActive={isActive} color={color}>
+                {text}
+              </Avatar>
+              <TextContainer>
+                <div>{name}</div>
+                <div className="email">{email}</div>
+              </TextContainer>
+            </ListItem>
+          );
+        })}
       </List>
     </>
   );
 };
 
 const List = styled.div`
-  position: absolute;
+  position: relative;
   width: 350px;
   height: ${({ listLength }: { listLength: number }) =>
     listLength === 1 ? "75px" : "150px"};
@@ -75,26 +82,39 @@ const List = styled.div`
   }
 `;
 
-const ListItem = styled.div`
+const Avatar = styled.div<{ isActive: boolean; color: string }>`
+  color: ${({ isActive, color }) => (isActive ? color : "#ffffff")};
+  background: ${({ isActive, color }) => (isActive ? "#ffffff" : color)};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24;
+  font-weight: 600;
+  height: 38px;
+  width: 38px;
+  border-radius: 4px;
+  margin-bottom: -5px;
+`;
+
+const ListItem = styled.div<{ isActive: boolean; color: string }>`
   display: flex;
   align-items: center;
   height: 40px;
   padding: 17px 30px;
   color: ${({ isActive }: { isActive: boolean }) =>
     isActive ? "#ffffff" : "#000000"};
-  background-color: ${({ isActive }: { isActive: boolean }) =>
-    isActive ? "#0D3F29" : "white"};
+  background-color: ${({ isActive, color }) => (isActive ? color : "white")};
   list-style-type: none;
   border-bottom: solid 1px lightgray;
 
   &:hover {
     color: #ffffff;
-    background-color: #0d3f29;
+    background-color: ${({ color }) => color};
     .email {
       color: #ffffff;
     }
-    .avatar {
-      color: #0d3f29;
+    ${Avatar} {
+      color: ${({ color }) => color};
       background-color: #ffffff;
     }
     cursor: pointer;
@@ -113,20 +133,6 @@ const ListItem = styled.div`
     border-bottom: none;
     border-radius: 0 0 0px 6px;
   }
-`;
-
-const Avatar = styled.div<{ isActive: boolean }>`
-  color: ${({ isActive }) => (isActive ? "#0D3F29" : "#ffffff")};
-  background: ${({ isActive }) => (isActive ? "#ffffff" : "#0D3F29")};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 24;
-  font-weight: 600;
-  height: 38px;
-  width: 38px;
-  border-radius: 4px;
-  margin-bottom: -5px;
 `;
 
 const TextContainer = styled.div`
