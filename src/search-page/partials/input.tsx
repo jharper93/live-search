@@ -14,15 +14,16 @@ export const TextInput: React.FC<IProps> = observer(
     return (
       <>
         <Input
+          data-testid="input"
           isInputFocused={isInputFocused}
           type="text"
           placeholder="Choose Manager"
           value={value}
           onFocus={() => setIsInputFocused(true)}
           onBlur={() => setIsInputFocused(false)}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setInputValue(e.currentTarget.value)
-          }
+          onChange={({
+            currentTarget: { value },
+          }: React.ChangeEvent<HTMLInputElement>) => setInputValue(value)}
         />
       </>
     );
@@ -40,7 +41,6 @@ const Input = styled.input<{
   border-radius: 5px;
   font-size: 16px;
   outline: none;
-
   box-shadow: 0px 2px 3px 0px rgb(141 141 141);
   border: solid 1px gray;
   :focus {

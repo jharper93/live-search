@@ -17,13 +17,14 @@ export const SearchList: React.FC<IProps> = ({
 }) => {
   const myRef = React.useRef<any>(null);
 
-  // Uncomment to see list auto scrolling when up/down arrow buttons used (be warned it is buggy)
+  // Uncomment useEffect below,
+  // selected list item (by up/down arrow keys) auto scrolls to be visible
+  // Beware: it is buggy
+
   // React.useEffect(() => {
   //   if (activeListIndex === undefined) return;
-  //   const isEven = activeListIndex % 2 === 0 || activeListIndex === 0
-
   //   if (!myRef.current) return;
-  //   myRef.current.scrollIntoView(isEven);
+  //   myRef.current.scrollIntoView();
   // }, [activeListIndex]);
 
   return (
@@ -42,7 +43,7 @@ export const SearchList: React.FC<IProps> = ({
               onMouseDown={() => setActiveManagerId(id)}
             >
               <Avatar className="avatar" isActive={isActive} color={color}>
-                {text}
+                <Offset>{text}</Offset>
               </Avatar>
               <TextContainer>
                 <div>{name}</div>
@@ -70,16 +71,20 @@ const List = styled.div`
   &::-webkit-scrollbar {
     width: 0.4em;
     height: 0.5em;
-    color: #0d3f29;
+    color: #286b4d;
     background-color: white;
     border-radius: 5px;
   }
 
   &::-webkit-scrollbar-thumb {
     position: absolute;
-    background-color: #0d3f29;
-    border-radius: 0;
+    background-color: #286b4d;
+    border-radius: 5px;
   }
+`;
+
+const Offset = styled.div`
+  margin-bottom: 4px;
 `;
 
 const Avatar = styled.div<{ isActive: boolean; color: string }>`

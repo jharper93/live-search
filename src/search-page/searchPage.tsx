@@ -1,31 +1,29 @@
 import { observer } from "mobx-react";
 import React from "react";
 import styled from "styled-components";
-import { useStore } from "../root.model";
 import { TextInput } from "./partials/input";
 import { SearchList } from "./partials/list";
 import peakLogo from "../images/logo-green.png";
 import { Footer } from "../footer/footer";
+import { store } from "./input.model";
 
 export const SearchPage: React.FC = observer(() => {
   const {
-    searchPage: {
-      inputValue,
-      isInputFocused,
-      activeListIndex,
-      activeManagerId,
-      managersFilteredByInput,
-      managersListLength,
-      inputIsExactMatch,
-      managerNameToSet,
-      setActiveManagerId,
-      setIsInputFocused,
-      getMangers,
-      setInputValue,
-      setActiveListIndex,
-      keyEventHandler,
-    },
-  } = useStore();
+    inputValue,
+    isInputFocused,
+    activeListIndex,
+    activeManagerId,
+    managersFilteredByInput,
+    managersListLength,
+    inputIsExactMatch,
+    managerNameToSet,
+    setIsInputFocused,
+    setActiveManagerId,
+    getMangers,
+    setInputValue,
+    setActiveListIndex,
+    keyEventHandler,
+  } = store;
 
   React.useEffect(() => {
     getMangers();
@@ -55,7 +53,7 @@ export const SearchPage: React.FC = observer(() => {
         <img src={peakLogo} alt="peakonLogo" />
       </TopBackground>
       <Container>
-        <Title>Manager Search</Title>
+        <H1 data-testid="title-manager">Manager search</H1>
         <TextInput
           value={inputValue}
           isInputFocused={isInputFocused}
@@ -101,7 +99,7 @@ const Container = styled.div`
   margin-top: -140px;
 `;
 
-const Title = styled.div`
+const H1 = styled.div`
   font-size: 36px;
   color: white;
   font-weight: bolder;

@@ -15,8 +15,8 @@ export class SearchRootModel {
 
   get removeNewManager() {
     if (!this.data) return [];
-    return this.data.filter((m) =>
-      m.attributes.lastName === "Manager" ? false : true
+    return this.data.filter(
+      ({ attributes: { lastName } }) => lastName !== "Manager"
     );
   }
 
@@ -28,7 +28,9 @@ export class SearchRootModel {
         name,
         email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@kinetar.com`,
         avatar: {
-          text: `${firstName.charAt(0)}${lastName.charAt(0)}`,
+          text: `${firstName.charAt(0).toUpperCase()}${lastName
+            .charAt(0)
+            .toUpperCase()}`,
           color: colorArray[Math.floor(Math.random() * colorArray.length)],
         },
       })
@@ -112,6 +114,8 @@ export class SearchRootModel {
     this.activeManagerId = id;
   };
 }
+
+export const store = new SearchRootModel();
 
 export interface IDataArray {
   id: string;
